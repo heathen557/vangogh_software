@@ -69,6 +69,8 @@ void MainWindow::initConnect()
     connect(&channelPara_dia,&channekParameter_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
     connect(receSerial_Obj,&receSerial_msg::AckCmd_channelParameter_signal,&channelPara_dia,&channekParameter_Dialog::AckCmd_channelParameter_slot);
 
+    //自动步进界面的 信号与槽的连接
+    connect(&autoStep_dia,&AutoStepping_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
 
 }
 
@@ -982,4 +984,14 @@ void MainWindow::AckCmd_MainWindow_slot(QString returnCmd,QString AckInfo)
         }
 
     }
+}
+
+
+//!
+//! \brief MainWindow::on_AutoStepping_pushButton_clicked
+//!自动步进窗口
+void MainWindow::on_AutoStepping_pushButton_clicked()
+{
+    autoStep_dia.setModal(true);
+    autoStep_dia.show();
 }

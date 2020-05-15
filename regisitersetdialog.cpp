@@ -216,6 +216,10 @@ void RegisiterSetDialog::on_saveLocal_pushButton_clicked()
 //发送 寄存器配置   5A 01 LL LL  01  DD...DD XX
 void RegisiterSetDialog::on_send_pushButton_clicked()
 {
+//    //发送完数据信息之后，断开信号与槽的连接,接收完数据之后重新建立连接
+//    disconnect(ui->tableWidget,SIGNAL(cellChanged(int,int)),0,0);
+
+
     //获取当前控件上的内容,组装成 字符串
     int index = 0;
     QStringList textString;
@@ -255,13 +259,16 @@ void RegisiterSetDialog::on_send_pushButton_clicked()
     emit sendSerialSignal(cmdStr);
 
 
-    //发送完数据信息之后，断开信号与槽的连接,接收完数据之后重新建立连接
-    disconnect(ui->tableWidget,SIGNAL(cellChanged(int,int)),0,0);
+
 }
 
 //读取 设备寄存器配置  5A 00 02 00 01 00
 void RegisiterSetDialog::on_read_pushButton_clicked()
 {
+    //发送完数据信息之后，断开信号与槽的连接,接收完数据之后重新建立连接
+    disconnect(ui->tableWidget,SIGNAL(cellChanged(int,int)),0,0);
+
+
     ui->tableWidget->setCurrentCell(25,19);   //将光标移动至最末尾的地方
 
     //命令组帧
@@ -293,11 +300,19 @@ void RegisiterSetDialog::AckCmdRegister_slot(QString returnCmdStr,QString cmdInf
             QString tmp = valueItem[index].text();
             QString tmp2 =  cmdInfo.mid(2+i,2);
 
-            qDebug()<<"index = "<<index<<"   tmp="<<tmp<<"  tmp2="<<tmp2;
+//            qDebug()<<"index = "<<index<<"   tmp="<<tmp<<"  tmp2="<<tmp2;
 
             if((!tmp.isEmpty()) && (tmp != tmp2))
             {
                 valueItem[index].setTextColor(differ_color);
+            }else
+            {
+                if(valueItem[index].textColor() != alter_color)
+                {
+                    valueItem[index].setTextColor(black_color);
+                }
+
+
             }
 
 

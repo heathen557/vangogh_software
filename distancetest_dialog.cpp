@@ -300,3 +300,8 @@ void distanceTest_Dialog::on_stop_pushButton_2_clicked()
     oneSec_Timer.stop();
 
 }
+
+void distanceTest_Dialog::on_clear_pushButton_clicked()
+{
+   ui->plainTextEdit->clear();
+}

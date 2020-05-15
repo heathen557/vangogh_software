@@ -9,6 +9,7 @@
 #include"distancetest_dialog.h"
 #include "rowdata_dialog.h"
 #include"channekparameter_dialog.h"
+#include"autostepping_dialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -132,6 +133,8 @@ private slots:
 
     void on_time_outer_radioButton_clicked();
 
+    void on_AutoStepping_pushButton_clicked();
+
 signals:
     void openOrCloseSerial_signal(bool);
 
@@ -152,6 +155,8 @@ private:
     channekParameter_Dialog channelPara_dia;     //通道系数设置界面
 
     QStringList fwBin_stringList;
+
+    AutoStepping_Dialog autoStep_dia;
 
 
 

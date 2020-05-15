@@ -59,6 +59,8 @@ private slots:
 
     void on_stop_pushButton_2_clicked();
 
+    void on_clear_pushButton_clicked();
+
 private:
     Ui::distanceTest_Dialog *ui;
 
