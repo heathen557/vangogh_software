@@ -267,7 +267,14 @@
        <item>
         <widget class="QPushButton" name="send_pushButton">
          <property name="text">
-          <string>发送</string>
+          <string>全部发送</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="singleSend_pushButton">
+         <property name="text">
+          <string>单个发送</string>
          </property>
         </widget>
        </item>

@@ -381,6 +381,45 @@ void receSerial_msg::readDataSlot()
                 }
 
 
+                //13 DCR测试返回命令
+                if("80" == returnCmdStr)
+                {
+                    QString secCmd = single_Data.mid(8,2);
+                    if("5C" == secCmd)
+                    {
+                        QString returnAck = "805C";
+                        QString AckInfo = single_Data.mid(10,dataLen);
+                        emit AckCmd_DCRTest_signal(returnAck,AckInfo);
+                    }
+
+                }
+
+
+                // 14 delayLine的测试返回命令
+                if("80" == returnCmdStr)
+                {
+                    QString secCmd = single_Data.mid(8,2);
+                    if("5D" == secCmd)
+                    {
+                        QString returnAck = "805D";
+                        QString AckInfo = single_Data.mid(10,dataLen);
+                        emit AckCmd_delayLine_signal(returnAck,AckInfo);
+                    }
+                }
+
+                // 15 获取时钟相位
+                if("80" == returnCmdStr)
+                {
+                    QString secCmd = single_Data.mid(8,2);
+                    if("5E" == secCmd)
+                    {
+                        QString returnAck = "805E";
+                        QString AckInfo = single_Data.mid(10,dataLen);
+                        emit AckCmd_delayLine_signal(returnAck,AckInfo);
+                    }
+                }
+
+
 
 
 

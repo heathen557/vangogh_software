@@ -640,7 +640,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QPushButton" name="Vango_Delayline_pushButton_2">
+        <widget class="QPushButton" name="Vango_Delayline_pushButton">
          <property name="text">
           <string>Delayline测试</string>
          </property>
@@ -694,7 +694,7 @@
         </spacer>
        </item>
        <item row="3" column="0">
-        <widget class="QPushButton" name="Vango_DCR_pushButton_2">
+        <widget class="QPushButton" name="Vango_DCR_pushButton">
          <property name="text">
           <string>DCR测试</string>
          </property>

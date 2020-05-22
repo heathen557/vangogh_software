@@ -60,6 +60,10 @@ signals:
 
     void AckCmd_MainWindow_signal(QString,QString);
 
+    void AckCmd_DCRTest_signal(QString,QString);
+
+    void AckCmd_delayLine_signal(QString,QString);
+
 
     void toShowVangogh_histogramSignal(int,QVector<double>,int);   //显示梵高的直方图
     void toShowCassatt_histogramSignal(QVector<double>,int);   //显示卡萨特直方图

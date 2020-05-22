@@ -36,6 +36,10 @@ public:
     QColor differ_color;
     QColor black_color;
 
+
+    int select_single_row;
+    int select_single_col;
+
 public slots:
     void on_loadLocal_pushButton_clicked();
 
@@ -61,6 +65,11 @@ signals:
 
 private slots:
     void on_test_pushButton_clicked();
+
+    void on_tableWidget_cellClicked(int row, int column);
+
+    void on_singleSend_pushButton_clicked();
+
 
 private:
     Ui::RegisiterSetDialog *ui;

@@ -72,6 +72,15 @@ void MainWindow::initConnect()
     //自动步进界面的 信号与槽的连接
     connect(&autoStep_dia,&AutoStepping_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
 
+    //DCR测试的界面 信号与槽的连接
+    connect(&DCR_test_dia,&DCR_test_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
+    connect(receSerial_Obj,&receSerial_msg::AckCmd_DCRTest_signal,&DCR_test_dia,&DCR_test_Dialog::AckCmd_DCRTest_slot);
+
+    //delayLine 测试的槽函数
+    connect(&delayLine_dia,&delayLine_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
+    connect(receSerial_Obj,&receSerial_msg::AckCmd_delayLine_signal,&delayLine_dia,&delayLine_Dialog::AckCmd_delayLine_slot);
+
+
 }
 
 //!
@@ -333,7 +342,7 @@ void MainWindow::Display_log_slot(QString str)  //打印日志信息到控制信
 void MainWindow::on_Register_action_triggered()
 {
 
-    register_dia.setModal(true);
+//    register_dia.setModal(true);
     register_dia.showMaximized();
 }
 
@@ -569,7 +578,7 @@ void MainWindow::on_RawData_dia_pushButton_clicked()
 
 void MainWindow::on_vango_Histogram_pushButton_clicked()
 {
-    cassatHistogram_dia.setModal(true);
+//    cassatHistogram_dia.setModal(true);
     cassatHistogram_dia.show();
 }
 
@@ -994,4 +1003,15 @@ void MainWindow::on_AutoStepping_pushButton_clicked()
 {
     autoStep_dia.setModal(true);
     autoStep_dia.show();
+}
+
+void MainWindow::on_Vango_DCR_pushButton_clicked()
+{
+    DCR_test_dia.show();
+}
+
+//delayLine 测试窗口
+void MainWindow::on_Vango_Delayline_pushButton_clicked()
+{
+    delayLine_dia.show();
 }

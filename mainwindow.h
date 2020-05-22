@@ -10,6 +10,8 @@
 #include "rowdata_dialog.h"
 #include"channekparameter_dialog.h"
 #include"autostepping_dialog.h"
+#include"dcr_test_dialog.h"
+#include"delayline_dialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -135,6 +137,10 @@ private slots:
 
     void on_AutoStepping_pushButton_clicked();
 
+    void on_Vango_DCR_pushButton_clicked();
+
+    void on_Vango_Delayline_pushButton_clicked();
+
 signals:
     void openOrCloseSerial_signal(bool);
 
@@ -157,6 +163,9 @@ private:
     QStringList fwBin_stringList;
 
     AutoStepping_Dialog autoStep_dia;
+    DCR_test_Dialog DCR_test_dia;
+
+    delayLine_Dialog delayLine_dia;
 
 
 

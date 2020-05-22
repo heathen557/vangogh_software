@@ -10,6 +10,8 @@ RegisiterSetDialog::RegisiterSetDialog(QWidget *parent) :
 
 //    ui->test_pushButton->setVisible(false);
 
+//    ui->tableWidget->setMouseTracking(true);
+
     alter_color = QColor(10,10,250);
     differ_color = QColor(250,0,0);
     black_color = QColor(Qt::black);
@@ -362,13 +364,26 @@ void RegisiterSetDialog::changeEvent(QEvent *e)
 *@auther zwt
 *@date 2020-04-29
 *@brief:  触发时   标识用户进行了修改，将字体修改为蓝色
+*    5A 01 LL LL DD DD CC
 */
 void RegisiterSetDialog::tableWidget_cellChanged(int row, int column)
 {
-    qDebug()<<"row = "<<row<<" column ="<<column;
+//    qDebug()<<"row = "<<row<<" column ="<<column<<" cell changed";
 
-    int index = column/2 * row_show + row;
-    valueItem[index].setTextColor(alter_color);
+//    int regIndex = column * row_show + row;
+//    QString regStr = addressItem[regIndex].text();
+
+    int valueIndex = column/2 * row_show + row;
+//    QString tmpStr = valueItem[valueIndex].text();
+
+//    QString regStr = addressItem[valueIndex].text();
+
+//    qDebug()<<" regStr = "<<regStr<<"   tmpStr="<<tmpStr;
+    valueItem[valueIndex].setTextColor(alter_color);
+
+//    QString cmdStr = "5A 01 03 00 01 ";
+
+
 
 
 }
@@ -388,3 +403,25 @@ void RegisiterSetDialog::on_test_pushButton_clicked()
 
 }
 
+
+void RegisiterSetDialog::on_tableWidget_cellClicked(int row, int column)
+{
+    qDebug()<<"on_tableWidget_cellClicked row="<<row<<",col="<<column;
+    select_single_row = row;
+    select_single_col = column;
+}
+
+void RegisiterSetDialog::on_singleSend_pushButton_clicked()
+{
+    int Index = select_single_col/2 * row_show + select_single_row;
+    QString tmpStr = valueItem[Index].text();
+    QString regStr = addressItem[Index].text();
+
+    qDebug()<<"regStr = "<<regStr<<"  tmpStr ="<<tmpStr;
+
+    QString cmdStr = "5A 01 03 00 01 ";
+    cmdStr.append(regStr).append(tmpStr);
+    emit sendSerialSignal(cmdStr);
+
+
+}
