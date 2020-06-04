@@ -38,9 +38,12 @@ public:
 
     /******计算confidence 以及 dmax 相关**********/
     float C1;
+    float C2;
+    float C3;
     float R0;
-    float P;
+    float row0;
     float P0;
+
     float IT;
     float IT0;
 
@@ -76,6 +79,8 @@ signals:
     void AckCmd_delayLine_signal(QString,QString);
 
     void AckCmd_autoStepping_signal(QString,QString);
+
+    void AckCmd_windowSetting_signal(QString,QString);
 
 
     void toShowVangogh_histogramSignal(int,QVector<double>,int);   //显示梵高的直方图

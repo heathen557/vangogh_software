@@ -19,13 +19,16 @@ receSerial_msg::receSerial_msg(QObject *parent) : QObject(parent)
 
     QSettings paraSetting("parameters.ini", QSettings::IniFormat);
     C1 = paraSetting.value("confidence_para/C1").toString().toFloat();
+    C2 = paraSetting.value("confidence_para/C2").toString().toFloat();
+    C3 = paraSetting.value("confidence_para/C3").toString().toFloat();
     R0 = paraSetting.value("confidence_para/R0").toString().toFloat();
-    P = paraSetting.value("confidence_para/P").toString().toFloat();
+    row0 = paraSetting.value("confidence_para/row0").toString().toFloat();
     P0 = paraSetting.value("confidence_para/P0").toString().toFloat();
+
     IT = paraSetting.value("confidence_para/IT").toString().toFloat();
     IT0 = paraSetting.value("confidence_para/IT0").toString().toFloat();
 
-    qDebug()<<"C1 = "<<C1<<"  R0="<<R0<<" P="<<P<<"  P0="<<P0<<"  IT="<<IT<<"  IT0="<<IT0;
+    qDebug()<<"C1 = "<<C1<<"  C2="<<C2<<" C3="<<C3<<"  R0="<<R0<<"  row0="<<IT<<"  row0="<<row0<<"  p0="<<P0;
 
 
 }
@@ -327,13 +330,6 @@ void receSerial_msg::readDataSlot()
 
 
 
-                        //显示 C1 本地读取
-                        //confidence ,Dmax
-                        float C2 = 64.0;
-                        float C3 = 344.0;
-
-
-
                         int pointNum = 0;    //该包数据点的个数
 
                          //16进制数据转化为10进制 然后再转化成字符串
@@ -362,17 +358,19 @@ void receSerial_msg::readDataSlot()
                                 confidence = 0;
                             }else if(tmp_peak > (N2+6*sigma))
                             {
-                                confidence = 63.0/64.0;
+                                confidence = 63.0;
                             }else
                             {
                                 float tmpFloat = 8 * (6*sigma - tmp_peak + N2)/(3*sigma);
-                                confidence = (64.0 - pow(tmpFloat,2))/64.0;
+                                confidence = (64.0 - pow(tmpFloat,2));
                             }
 
                             // 4 计算DMAX
-                            float tmpFloat_1 = sqrt(C3 * noise_mean);
-                            float tmpFloat_2 = (P0 * P * IT)/(6 * P0 * tmpFloat_1 * IT0 );
-                            Dmax = R0 * sqrt(tmpFloat_2);
+//                            float tmpFloat_1 = sqrt(C3 * noise_mean);
+//                            float tmpFloat_2 = (P0 * P * IT)/(6 * P0 * tmpFloat_1 * IT0 );
+//                            Dmax = R0 * sqrt(tmpFloat_2);
+                            float tmpFloat_1 = (0.5 * P0)/(6 * row0 * sigma);
+                            Dmax = R0 * sqrt(tmpFloat_1);
 
 
 
@@ -384,11 +382,11 @@ void receSerial_msg::readDataSlot()
                             currentSingleData.append(QString::number(tmp_peak));
                             currentSingleData.append("   ");
                             currentSingleData.append(QString::number(N1,'f',3));
-                            currentSingleData.append("   ");
-                            currentSingleData.append(QString::number(confidence,'f',3));
-                            currentSingleData.append("   ");
+                            currentSingleData.append("Mcps   ");
+                            currentSingleData.append(QString::number(int(confidence)));
+                            currentSingleData.append("/64   ");
                             currentSingleData.append(QString::number(Dmax,'f',3));
-                            currentSingleData.append("   ");
+                            currentSingleData.append("mm   ");
 
                             vangogh_DistanceStr.append(currentSingleData);
                         }
@@ -417,10 +415,6 @@ void receSerial_msg::readDataSlot()
                         float N1 = 0;
                         float confidence = 0 ;
                         float Dmax = 0;
-                        //显示 C1 本地读取
-                        //confidence ,Dmax
-                        float C2 = 64.0;
-                        float C3 = 344.0;
 
                         //16进制数据转化为10进制 然后再转化成字符串
                        for(int i=0; i<dataLen; i+=20)
@@ -453,17 +447,19 @@ void receSerial_msg::readDataSlot()
                                confidence = 0;
                            }else if(tmp_peak > (N2+6*sigma))
                            {
-                               confidence = 63.0/64.0;
+                               confidence = 63.0;
                            }else
                            {
                                float tmpFloat = 8 * (6*sigma - tmp_peak + N2)/(3*sigma);
-                               confidence = (64.0 - pow(tmpFloat,2))/64.0;
+                               confidence = (64.0 - pow(tmpFloat,2));
                            }
 
                            // 4 计算DMAX
-                           float tmpFloat_1 = sqrt(C3 * noise_mean);
-                           float tmpFloat_2 = (P0 * P * IT)/(6 * P0 * tmpFloat_1 * IT0 );
-                           Dmax = R0 * sqrt(tmpFloat_2);
+//                           float tmpFloat_1 = sqrt(C3 * noise_mean);
+//                           float tmpFloat_2 = (P0 * P * IT)/(6 * P0 * tmpFloat_1 * IT0 );
+//                           Dmax = R0 * sqrt(tmpFloat_2);
+                           float tmpFloat_1 = (0.5 * P0)/(6 * row0 * sigma);
+                           Dmax = R0 * sqrt(tmpFloat_1);
 
 
                            currentSingleData = QString::number(tmp_LSB);
@@ -473,11 +469,11 @@ void receSerial_msg::readDataSlot()
                            currentSingleData.append(QString::number(tmp_peak));
                            currentSingleData.append("   ");
                            currentSingleData.append(QString::number(N1,'f',3));
-                           currentSingleData.append("   ");
-                           currentSingleData.append(QString::number(confidence,'f',3));
-                           currentSingleData.append("   ");
+                           currentSingleData.append("Mcps   ");
+                           currentSingleData.append(QString::number(int(confidence)));
+                           currentSingleData.append("/64   ");
                            currentSingleData.append(QString::number(Dmax,'f',3));
-                           currentSingleData.append("   ");
+                           currentSingleData.append("mm   ");
 
 
                            //统计信息相关的变量存储
@@ -557,6 +553,21 @@ void receSerial_msg::readDataSlot()
                         emit AckCmd_delayLine_signal(returnAck,AckInfo);
                     }
                 }
+
+                // 16 写窗函数的返回指令
+                if("81" == returnCmdStr)
+                {
+                    QString secCmd = single_Data.mid(8,2);
+                    if("5F" == secCmd)
+                    {
+                        QString returnAck = "815F";
+                        QString AckInfo = "00"; //无效值
+                        emit AckCmd_windowSetting_signal(returnAck,AckInfo);
+
+                    }
+
+                }
+
 
 
 

@@ -8,7 +8,7 @@ QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = Vangogh_V6.4_1
+TARGET = Vangogh_V6.7
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     channekparameter_dialog.cpp \
     autostepping_dialog.cpp \
     dcr_test_dialog.cpp \
-    delayline_dialog.cpp
+    delayline_dialog.cpp \
+    windowsetting_dialog.cpp
 
 HEADERS  += mainwindow.h \
     receserial_msg.h \
@@ -48,7 +49,8 @@ HEADERS  += mainwindow.h \
     channekparameter_dialog.h \
     autostepping_dialog.h \
     dcr_test_dialog.h \
-    delayline_dialog.h
+    delayline_dialog.h \
+    windowsetting_dialog.h
 
 FORMS    += mainwindow.ui \
     cassathistogram_dialog.ui \
@@ -58,7 +60,8 @@ FORMS    += mainwindow.ui \
     channekparameter_dialog.ui \
     autostepping_dialog.ui \
     dcr_test_dialog.ui \
-    delayline_dialog.ui
+    delayline_dialog.ui \
+    windowsetting_dialog.ui
 
 RESOURCES += \
     images/img.qrc

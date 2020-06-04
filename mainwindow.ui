@@ -632,10 +632,17 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="electricityTest_pushButton">
+       <item row="2" column="1">
+        <widget class="QPushButton" name="vango_vspadCheck_pushButton">
          <property name="text">
-          <string>电学测试</string>
+          <string>Vango Vspad校准</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="vango_Histogram_pushButton">
+         <property name="text">
+          <string>Histogram读取</string>
          </property>
         </widget>
        </item>
@@ -653,32 +660,32 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="vango_vspadCheck_pushButton">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="electricityTest_pushButton">
          <property name="text">
-          <string>Vango Vspad校准</string>
+          <string>电学测试</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="2">
-        <widget class="QPushButton" name="vango_Histogram_pushButton">
-         <property name="text">
-          <string>Histogram读取</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="4">
-        <spacer name="horizontalSpacer_14">
+       <item row="6" column="3">
+        <spacer name="horizontalSpacer_6">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>137</width>
+           <width>160</width>
            <height>20</height>
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPushButton" name="vango_MCU_test_pushButton">
+         <property name="text">
+          <string>Vango MCU测试</string>
+         </property>
+        </widget>
        </item>
        <item row="2" column="4">
         <spacer name="horizontalSpacer_15">
@@ -700,12 +707,18 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QPushButton" name="vango_MCU_test_pushButton">
-         <property name="text">
-          <string>Vango MCU测试</string>
+       <item row="3" column="4">
+        <spacer name="horizontalSpacer_14">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>137</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item row="6" column="4">
         <spacer name="horizontalSpacer_16">
@@ -720,27 +733,14 @@
          </property>
         </spacer>
        </item>
-       <item row="6" column="3">
-        <spacer name="horizontalSpacer_6">
+       <item row="0" column="4">
+        <spacer name="horizontalSpacer_13">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>160</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="6" column="2">
-        <spacer name="horizontalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>161</width>
+           <width>137</width>
            <height>20</height>
           </size>
          </property>
@@ -750,6 +750,13 @@
         <widget class="QPushButton" name="distance_test_pushButton">
          <property name="text">
           <string>测距</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QCheckBox" name="ChipShineng_checkBox">
+         <property name="text">
+          <string>芯片使能</string>
          </property>
         </widget>
        </item>
@@ -767,26 +774,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="4">
-        <spacer name="horizontalSpacer_13">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>137</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="2" column="3">
-        <widget class="QCheckBox" name="ChipShineng_checkBox">
-         <property name="text">
-          <string>芯片使能</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="3">
         <widget class="QPushButton" name="ChipFuwei_pushButton">
          <property name="text">
@@ -798,6 +785,13 @@
         <widget class="QPushButton" name="AutoStepping_pushButton">
          <property name="text">
           <string>自动步进</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="2">
+        <widget class="QPushButton" name="windowSetting_pushButton">
+         <property name="text">
+          <string>窗口设置</string>
          </property>
         </widget>
        </item>

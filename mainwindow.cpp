@@ -82,6 +82,10 @@ void MainWindow::initConnect()
     connect(&delayLine_dia,&delayLine_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
     connect(receSerial_Obj,&receSerial_msg::AckCmd_delayLine_signal,&delayLine_dia,&delayLine_Dialog::AckCmd_delayLine_slot);
 
+    //窗口设置的相关槽函数
+    connect(&windowSetting_dia,&windowSetting_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
+    connect(receSerial_Obj,&receSerial_msg::AckCmd_windowSetting_signal,&windowSetting_dia,&windowSetting_Dialog::AckCmd_windowSetting_slot);
+
 
 
 
@@ -1018,4 +1022,10 @@ void MainWindow::on_Vango_DCR_pushButton_clicked()
 void MainWindow::on_Vango_Delayline_pushButton_clicked()
 {
     delayLine_dia.show();
+}
+
+//窗口设置界面
+void MainWindow::on_windowSetting_pushButton_clicked()
+{
+    windowSetting_dia.show();
 }
