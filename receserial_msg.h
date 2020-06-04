@@ -35,6 +35,17 @@ public:
 
     QVector<double> vangoghHistogram_512;
 
+
+    /******计算confidence 以及 dmax 相关**********/
+    float C1;
+    float R0;
+    float P;
+    float P0;
+    float IT;
+    float IT0;
+
+
+
 signals:
     void dealedData_signal(QString,vector<double>,vector<double>);     //当前的tof值 ; plotData ; statisticData
 
@@ -63,6 +74,8 @@ signals:
     void AckCmd_DCRTest_signal(QString,QString);
 
     void AckCmd_delayLine_signal(QString,QString);
+
+    void AckCmd_autoStepping_signal(QString,QString);
 
 
     void toShowVangogh_histogramSignal(int,QVector<double>,int);   //显示梵高的直方图

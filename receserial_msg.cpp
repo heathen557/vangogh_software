@@ -11,6 +11,23 @@ receSerial_msg::receSerial_msg(QObject *parent) : QObject(parent)
     clearFlag = false;
 
     vangoghHistogram_512.resize(512);
+
+
+
+
+    /******读取本地的配置参数  confidence 与 Dmax ******/
+
+    QSettings paraSetting("parameters.ini", QSettings::IniFormat);
+    C1 = paraSetting.value("confidence_para/C1").toString().toFloat();
+    R0 = paraSetting.value("confidence_para/R0").toString().toFloat();
+    P = paraSetting.value("confidence_para/P").toString().toFloat();
+    P0 = paraSetting.value("confidence_para/P0").toString().toFloat();
+    IT = paraSetting.value("confidence_para/IT").toString().toFloat();
+    IT0 = paraSetting.value("confidence_para/IT0").toString().toFloat();
+
+    qDebug()<<"C1 = "<<C1<<"  R0="<<R0<<" P="<<P<<"  P0="<<P0<<"  IT="<<IT<<"  IT0="<<IT0;
+
+
 }
 
 void receSerial_msg::openOrCloseSerial_slot(bool flag)
@@ -302,21 +319,76 @@ void receSerial_msg::readDataSlot()
                         QString currentSingleData;
                         float tmp_LSB = 0;
                         float tmp_MM = 0;
+                        float tmp_peak = 0;
+                        float noise_mean = 0;
+                        float N1 = 0;
+                        float confidence = 0 ;
+                        float Dmax = 0;
+
+
+
+                        //显示 C1 本地读取
+                        //confidence ,Dmax
+                        float C2 = 64.0;
+                        float C3 = 344.0;
+
+
+
                         int pointNum = 0;    //该包数据点的个数
 
                          //16进制数据转化为10进制 然后再转化成字符串
-                        for(int i=0; i<dataLen; i+=8)
+                        for(int i=0; i<dataLen; i+=20)
                         {
                             pointNum++;
-                            //16进制数据转化为10进制 然后再转化成字符串
+                            // 1  16进制数据转化为10进制 然后再转化成字符串
                             QString strTmp = dataStr.mid(i+2,2) + dataStr.mid(i+0,2);
-                            tmp_LSB = strTmp.toInt(NULL,16);
+                            tmp_LSB = strTmp.toInt(NULL,16);   //1
                             strTmp = dataStr.mid(i+6,2) + dataStr.mid(i+4,2);
-                            tmp_MM = strTmp.toInt(NULL,16);
+                            tmp_MM = strTmp.toInt(NULL,16);    //2
+                            strTmp = dataStr.mid(14,2) + dataStr.mid(12,2) + dataStr.mid(10,2) + dataStr.mid(8,2);
+                            tmp_peak = strTmp.toInt(NULL,16);  //3
+                            strTmp = dataStr.mid(18,2) + dataStr.mid(16,2);
+//                            qDebug()<<"strTmp = "<<strTmp;
+                            noise_mean = strTmp.toInt(NULL,16); // 4
+
+                            //2 显示
+                            N1 = noise_mean * C1;
+
+                            //3 计算confidence
+                            float N2 = noise_mean * C2;
+                            float sigma = sqrt(C3 * noise_mean);
+                            if(tmp_peak<(N2+3*sigma))
+                            {
+                                confidence = 0;
+                            }else if(tmp_peak > (N2+6*sigma))
+                            {
+                                confidence = 63.0/64.0;
+                            }else
+                            {
+                                float tmpFloat = 8 * (6*sigma - tmp_peak + N2)/(3*sigma);
+                                confidence = (64.0 - pow(tmpFloat,2))/64.0;
+                            }
+
+                            // 4 计算DMAX
+                            float tmpFloat_1 = sqrt(C3 * noise_mean);
+                            float tmpFloat_2 = (P0 * P * IT)/(6 * P0 * tmpFloat_1 * IT0 );
+                            Dmax = R0 * sqrt(tmpFloat_2);
+
+
+
 
                             currentSingleData = QString::number(tmp_LSB);
                             currentSingleData.append("   ");
-                            currentSingleData.append(QString::number(tmp_MM)).append("  ");
+                            currentSingleData.append(QString::number(tmp_MM));
+                            currentSingleData.append("   ");
+                            currentSingleData.append(QString::number(tmp_peak));
+                            currentSingleData.append("   ");
+                            currentSingleData.append(QString::number(N1,'f',3));
+                            currentSingleData.append("   ");
+                            currentSingleData.append(QString::number(confidence,'f',3));
+                            currentSingleData.append("   ");
+                            currentSingleData.append(QString::number(Dmax,'f',3));
+                            currentSingleData.append("   ");
 
                             vangogh_DistanceStr.append(currentSingleData);
                         }
@@ -340,19 +412,73 @@ void receSerial_msg::readDataSlot()
                         float tmp_MM = 0;
                         int pointNum = 0;
 
+                        float tmp_peak = 0;
+                        float noise_mean = 0;
+                        float N1 = 0;
+                        float confidence = 0 ;
+                        float Dmax = 0;
+                        //显示 C1 本地读取
+                        //confidence ,Dmax
+                        float C2 = 64.0;
+                        float C3 = 344.0;
+
                         //16进制数据转化为10进制 然后再转化成字符串
-                       for(int i=0; i<dataLen; i+=8)
+                       for(int i=0; i<dataLen; i+=20)
                        {
+
+
                            pointNum++;
                            //16进制数据转化为10进制 然后再转化成字符串
+                           // 1  16进制数据转化为10进制 然后再转化成字符串
                            QString strTmp = dataStr.mid(i+2,2) + dataStr.mid(i+0,2);
-                           tmp_LSB = strTmp.toInt(NULL,16);
+                           tmp_LSB = strTmp.toInt(NULL,16);   //1
                            strTmp = dataStr.mid(i+6,2) + dataStr.mid(i+4,2);
-                           tmp_MM = strTmp.toInt(NULL,16);
+                           tmp_MM = strTmp.toInt(NULL,16);    //2
+                           strTmp = dataStr.mid(14,2) + dataStr.mid(12,2) + dataStr.mid(10,2) + dataStr.mid(8,2);
+                           tmp_peak = strTmp.toInt(NULL,16);  //3
+                           strTmp = dataStr.mid(18,2) + dataStr.mid(16,2);
+
+                           noise_mean = strTmp.toInt(NULL,16); // 4
+
+
+                           //2 显示
+                           N1 = noise_mean * C1;
+//                           qDebug()<<"strTmp = "<<strTmp<<"  noise_mean="<<noise_mean<<"  C1="<<C1;
+
+                           //3 计算confidence
+                           float N2 = noise_mean * C2;
+                           float sigma = sqrt(C3 * noise_mean);
+                           if(tmp_peak<(N2+3*sigma))
+                           {
+                               confidence = 0;
+                           }else if(tmp_peak > (N2+6*sigma))
+                           {
+                               confidence = 63.0/64.0;
+                           }else
+                           {
+                               float tmpFloat = 8 * (6*sigma - tmp_peak + N2)/(3*sigma);
+                               confidence = (64.0 - pow(tmpFloat,2))/64.0;
+                           }
+
+                           // 4 计算DMAX
+                           float tmpFloat_1 = sqrt(C3 * noise_mean);
+                           float tmpFloat_2 = (P0 * P * IT)/(6 * P0 * tmpFloat_1 * IT0 );
+                           Dmax = R0 * sqrt(tmpFloat_2);
+
 
                            currentSingleData = QString::number(tmp_LSB);
                            currentSingleData.append("   ");
-                           currentSingleData.append(QString::number(tmp_MM)).append("  ");
+                           currentSingleData.append(QString::number(tmp_MM));
+                           currentSingleData.append("   ");
+                           currentSingleData.append(QString::number(tmp_peak));
+                           currentSingleData.append("   ");
+                           currentSingleData.append(QString::number(N1,'f',3));
+                           currentSingleData.append("   ");
+                           currentSingleData.append(QString::number(confidence,'f',3));
+                           currentSingleData.append("   ");
+                           currentSingleData.append(QString::number(Dmax,'f',3));
+                           currentSingleData.append("   ");
+
 
                            //统计信息相关的变量存储
                            int StatisticLSB_offset = StatisticLSB_vector.size() -1000;
@@ -373,12 +499,25 @@ void receSerial_msg::readDataSlot()
 
                            vangogh_DistanceStr.append(currentSingleData);
                        }
+                       emit toSendStatistic_signal(StatisticLSB_vector,StatisticMM_vector);
                        emit toShow_vangogh_ResultMsg_signal(vangogh_DistanceStr,pointNum);
                        vangogh_DistanceStr.clear();
 
                     }
 
                 }
+
+                if("80" == returnCmdStr)
+                {
+                    QString secCmd = single_Data.mid(8,2);
+                    if("5A" == secCmd)
+                    {
+                        QString returnAck = "805A";
+                        QString AckInfo = single_Data.mid(10,dataLen);
+                        emit AckCmd_autoStepping_signal(returnAck,AckInfo);
+                    }
+                }
+
 
 
                 //13 DCR测试返回命令

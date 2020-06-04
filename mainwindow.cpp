@@ -52,6 +52,7 @@ void MainWindow::initConnect()
     connect(&distanceTest_dia,&distanceTest_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
     connect(receSerial_Obj,&receSerial_msg::toShow_vangogh_ResultMsg_signal,&distanceTest_dia,&distanceTest_Dialog::toShow_vangogh_ResultMsg_slot);
     connect(&distanceTest_dia,&distanceTest_Dialog::Display_log_signal,this,&MainWindow::Display_log_slot);
+    connect(receSerial_Obj,&receSerial_msg::toSendStatistic_signal,&distanceTest_dia,&distanceTest_Dialog::toSendStatistic_slot);
 
     //RowData相关
     connect(&RawData_dia,&RowData_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
@@ -61,8 +62,8 @@ void MainWindow::initConnect()
     //histogram相关
     connect(&cassatHistogram_dia,&cassatHistogram_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
     connect(receSerial_Obj,&receSerial_msg::toShowVangogh_histogramSignal,&cassatHistogram_dia,&cassatHistogram_Dialog::toShowVangogh_histogramSlot);
-    connect(receSerial_Obj,&receSerial_msg::toShowCassatt_histogramSignal,&cassatHistogram_dia,&cassatHistogram_Dialog::toShowCassatt_histogramSlot);
-    connect(receSerial_Obj,&receSerial_msg::toShow4300_histogramSignal,&cassatHistogram_dia,&cassatHistogram_Dialog::toShow4300_histogramSlot);
+//    connect(receSerial_Obj,&receSerial_msg::toShowCassatt_histogramSignal,&cassatHistogram_dia,&cassatHistogram_Dialog::toShowCassatt_histogramSlot);
+//    connect(receSerial_Obj,&receSerial_msg::toShow4300_histogramSignal,&cassatHistogram_dia,&cassatHistogram_Dialog::toShow4300_histogramSlot);
 
 
     //通道校准系数的设置通道
@@ -71,6 +72,7 @@ void MainWindow::initConnect()
 
     //自动步进界面的 信号与槽的连接
     connect(&autoStep_dia,&AutoStepping_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
+    connect(receSerial_Obj,&receSerial_msg::AckCmd_autoStepping_signal,&autoStep_dia,&AutoStepping_Dialog::AckCmd_autoStepping_slot);
 
     //DCR测试的界面 信号与槽的连接
     connect(&DCR_test_dia,&DCR_test_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
@@ -79,6 +81,8 @@ void MainWindow::initConnect()
     //delayLine 测试的槽函数
     connect(&delayLine_dia,&delayLine_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
     connect(receSerial_Obj,&receSerial_msg::AckCmd_delayLine_signal,&delayLine_dia,&delayLine_Dialog::AckCmd_delayLine_slot);
+
+
 
 
 }
@@ -401,7 +405,7 @@ void MainWindow::on_vango_MCU_test_pushButton_clicked()
 */
 void MainWindow::on_distance_test_pushButton_clicked()
 {
-    distanceTest_dia.setModal(true);
+//    distanceTest_dia.setModal(true);
     distanceTest_dia.show();
 }
 
@@ -571,7 +575,7 @@ void MainWindow::on_vangoFW_write_pushButton_clicked()
 */
 void MainWindow::on_RawData_dia_pushButton_clicked()
 {
-    RawData_dia.setModal(true);
+//    RawData_dia.setModal(true);
     RawData_dia.show();
 }
 
@@ -588,7 +592,7 @@ void MainWindow::on_vango_Histogram_pushButton_clicked()
 //!测试通道校准系数
 void MainWindow::on_channelParametre_pushButton_clicked()
 {
-    channelPara_dia.setModal(true);
+//    channelPara_dia.setModal(true);
     channelPara_dia.show();
 }
 
@@ -1001,7 +1005,7 @@ void MainWindow::AckCmd_MainWindow_slot(QString returnCmd,QString AckInfo)
 //!自动步进窗口
 void MainWindow::on_AutoStepping_pushButton_clicked()
 {
-    autoStep_dia.setModal(true);
+//    autoStep_dia.setModal(true);
     autoStep_dia.show();
 }
 

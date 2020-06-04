@@ -23,6 +23,10 @@ public:
 
     QVector<double> label_x;
 
+
+
+    QVector<double> vi4300_HistorgramTicks;      //标签
+    QVector<QString> vi4300_HistorgramLabels;    //标识
 signals:
     void sendSerialSignal(QString );             //串口发送信号
 

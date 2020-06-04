@@ -8,7 +8,7 @@ QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = Vangogh_V5.4
+TARGET = Vangogh_V6.4_1
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use

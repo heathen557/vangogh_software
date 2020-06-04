@@ -228,13 +228,13 @@
             </rect>
            </property>
            <property name="title">
-            <string>统计信息：</string>
+            <string>统计信息(1000次)：</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_6">
             <item row="0" column="0">
              <widget class="QLabel" name="label_6">
               <property name="text">
-               <string>LSB均值(1000)：</string>
+               <string>LSB均值：</string>
               </property>
              </widget>
             </item>
@@ -251,7 +251,7 @@
             <item row="1" column="0">
              <widget class="QLabel" name="label_10">
               <property name="text">
-               <string>LSB方差(1000)：</string>
+               <string>LSB标准差：</string>
               </property>
              </widget>
             </item>
@@ -268,7 +268,7 @@
             <item row="2" column="0">
              <widget class="QLabel" name="label_11">
               <property name="text">
-               <string>MM均值(1000)：</string>
+               <string>MM均值：</string>
               </property>
              </widget>
             </item>
@@ -285,7 +285,7 @@
             <item row="3" column="0">
              <widget class="QLabel" name="label_12">
               <property name="text">
-               <string>MM方差(1000)：</string>
+               <string>MM标准差：</string>
               </property>
              </widget>
             </item>

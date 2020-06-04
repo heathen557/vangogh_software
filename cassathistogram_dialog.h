@@ -27,13 +27,13 @@ private:
     QVector<QString> vangogh_HistorgramLabels;    //标识
     int binSize;
 
-    QCPBars *regen_cassatt;          //直方图用   *****标签相关
-    QVector<double> cassatt_HistorgramTicks;      //标签
-    QVector<QString> cassatt_HistorgramLabels;    //标识
+//    QCPBars *regen_cassatt;          //直方图用   *****标签相关
+//    QVector<double> cassatt_HistorgramTicks;      //标签
+//    QVector<QString> cassatt_HistorgramLabels;    //标识
 
-    QCPBars *regen_4300;          //直方图用   *****标签相关
-    QVector<double> vi4300_HistorgramTicks;      //标签
-    QVector<QString> vi4300_HistorgramLabels;    //标识
+//    QCPBars *regen_4300;          //直方图用   *****标签相关
+//    QVector<double> vi4300_HistorgramTicks;      //标签
+//    QVector<QString> vi4300_HistorgramLabels;    //标识
 
     void init_histogram();      //初始化直方图数据
 
@@ -51,8 +51,6 @@ private:
 
 public slots:
     void toShowVangogh_histogramSlot(int,QVector<double>,int);   //显示梵高的直方图
-    void toShowCassatt_histogramSlot(QVector<double>,int);   //显示卡萨特直方图
-    void toShow4300_histogramSlot(QVector<double>,int);      //显示4300直方图
 
     //vangogh
     void vangogh_read_timer_slot();

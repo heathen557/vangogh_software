@@ -16,7 +16,7 @@ delayLine_Dialog::delayLine_Dialog(QWidget *parent) :
     tableWidget_list.append(ui->TDC_widget_6);
     tableWidget_list.append(ui->TDC_widget_7);
     tableWidget_list.append(ui->TDC_widget_8);
-    tableWidget_list.append(ui->TDC_widget_9);
+
 
     label_list.append(ui->label_TDC0);
     label_list.append(ui->label_TDC0_2);
@@ -26,25 +26,37 @@ delayLine_Dialog::delayLine_Dialog(QWidget *parent) :
     label_list.append(ui->label_TDC0_6);
     label_list.append(ui->label_TDC0_7);
     label_list.append(ui->label_TDC0_8);
-    label_list.append(ui->label_TDC0_9);
 
 
 
-    for(int i=0;i<9;i++)
+
+    for(int i=0;i<8;i++)
     {
-        tableWidget_list[i]->xAxis->setRange(0,7);
+        tableWidget_list[i]->xAxis->setRange(0,8);
         tableWidget_list[i]->xAxis->grid()->setPen(QPen(QColor(130, 130, 130), 0, Qt::DotLine));
         tableWidget_list[i]->addGraph();
         tableWidget_list[i]->graph(0)->setPen(QPen(Qt::darkGreen));
+//        tableWidget_list[i]->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     }
 
 
-    label_x.resize(8);
-    for(int i=0;i<8;i++)
+//    label_x.resize(9);
+//    for(int i=0;i<9;i++)
+//    {
+//        label_x[i] = i;
+//    }
+
+
+
+    //4300
+    vi4300_HistorgramLabels.resize(9);
+    vi4300_HistorgramTicks.resize(9);
+    for(int i=0; i<9; i++)
     {
-        label_x[i] = i;
-    }
+        vi4300_HistorgramTicks[i] = i;
+        vi4300_HistorgramLabels[i] = "TDC" + QString::number(8-i);
 
+    }
 
 //    QVector<double> numData(16);
 //    QVector<double> label(16);
@@ -111,6 +123,30 @@ void delayLine_Dialog::AckCmd_delayLine_slot(QString returnCmdStr,QString cmdInf
 
     }else if("805D" == returnCmdStr)
     {
+
+        QString text;
+
+        int len = cmdInfo.length();
+        for(int i=0; i<len; i+=4)
+        {
+            text.append(cmdInfo.mid(i,4)).append("\n");
+        }
+        QString sfile="tdc.txt";
+
+        QFile file(sfile);
+        if(file.open(QIODevice::WriteOnly|QIODevice::Text))
+        {
+            QTextStream out(&file);
+            out<<text.toLocal8Bit()<<endl;
+            file.close();
+        }else
+        {
+            QString strMsg = QStringLiteral("文件保存失败，请检查路径");
+            QMessageBox::information(NULL,QStringLiteral("提示"),strMsg);
+        }
+
+
+
         QString tmpSingleStr;
         int tmpSingleInt;
         QVector<double> numData[10];
@@ -119,21 +155,22 @@ void delayLine_Dialog::AckCmd_delayLine_slot(QString returnCmdStr,QString cmdInf
         int max = -1;
 
 
-        for(int i=0; i<9; i++)    //TDC的序号
+        for(int i=0; i<8; i++)    //Step的序号   8个Step 9个TDC
         {
-            lastNum = -1;
-            numData[i+1].resize(8);
+            lastNum = 10000;
+            numData[i+1].resize(9);
             max = -1;
             flag = true;
-            for(int j=0;j<32; j+=4)
+            for(int j=0;j<36; j+=4)
             {
-                tmpSingleStr = cmdInfo.mid(i*32+j,4);
+                tmpSingleStr = cmdInfo.mid(i*36+j,4);
                 tmpSingleInt = tmpSingleStr.toInt(NULL,16);
-                numData[i+1][j/4] = tmpSingleInt;
+                numData[i+1][8 - j/4] = tmpSingleInt;         //数据TDC0-TDC8  显示要从TDC8 -TDC0
+
 
                 if(tmpSingleInt>max)
                     max = tmpSingleInt;
-                if(tmpSingleInt <= lastNum)
+                if(tmpSingleInt > lastNum)
                 {
                     flag = false;
                 }
@@ -152,8 +189,15 @@ void delayLine_Dialog::AckCmd_delayLine_slot(QString returnCmdStr,QString cmdInf
                 label_list[i]->setText("FAIL");
                 label_list[i]->setStyleSheet("color:red;");
             }
+
+
+            QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
+            textTicker->setTicks(vi4300_HistorgramTicks, vi4300_HistorgramLabels);
+            tableWidget_list[i]->xAxis->setTicker(textTicker);
+
+
             tableWidget_list[i]->yAxis->setRange(0,max);
-            tableWidget_list[i]->graph(0)->setData(label_x,numData[i+1]);
+            tableWidget_list[i]->graph(0)->setData(vi4300_HistorgramTicks,numData[i+1]);
             tableWidget_list[i]->replot();
 
         }
@@ -166,12 +210,12 @@ void delayLine_Dialog::on_test_pushButton_clicked()
     QString tmpStr = "805D";
     QString cmdStr;
     QString singleStr;
-    for(int i=0; i<9; i++)
+    for(int i=0; i<8; i++)
     {
-        for(int j=0; j<8; j++)
+        for(int j=9; j>0; j--)
         {
 
-            if(i==5 && j==5)
+            if(i==0 && j==5)
             {
                 singleStr = QString("%1").arg(21,4,16,QChar('0'));
             }else
@@ -191,12 +235,12 @@ void delayLine_Dialog::on_test_pushButton_2_clicked()
     QString tmpStr = "805D";
     QString cmdStr;
     QString singleStr;
-    for(int i=0; i<9; i++)
+    for(int i=0; i<8; i++)
     {
-        for(int j=0; j<8; j++)
+        for(int j=9; j>0; j--)
         {
 
-            if(i==3&& j==6)
+            if(i==7&& j==6)
             {
                 singleStr = QString("%1").arg(21,4,16,QChar('0'));
             }else

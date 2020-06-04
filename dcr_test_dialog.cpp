@@ -8,6 +8,7 @@ DCR_test_Dialog::DCR_test_Dialog(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(Qt::Widget);
 
+    devTime = 1.0;
 
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -140,6 +141,36 @@ void DCR_test_Dialog::on_start_pushButton_clicked()
     valtageStr = valtageStr.right(2);
     QString DCR_offset_str = ui->timeOffset_comboBox->currentText();
 
+    if("07" == DCR_offset_str)
+    {
+        devTime = 0.016;
+    }else if("08" == DCR_offset_str)
+    {
+        devTime = 0.032;
+    }else if("09" == DCR_offset_str)
+    {
+        devTime = 0.064;
+    }else if("0A" == DCR_offset_str)
+    {
+        devTime = 0.128;
+    }else if("0B" == DCR_offset_str)
+    {
+        devTime = 0.256;
+    }else if("0C" == DCR_offset_str)
+    {
+        devTime = 0.512;
+    }else if("0D" == DCR_offset_str)
+    {
+        devTime = 1.024;
+    }else if("0E" == DCR_offset_str)
+    {
+        devTime = 2.048;
+    }else
+    {
+        devTime = 1.0;
+    }
+
+    qDebug()<<"devTime = "<<QString::number(devTime);
 
     QString cmdStr = "5A 00 02 00 5C";
     cmdStr.append(valtageStr).append(DCR_offset_str);
@@ -159,8 +190,10 @@ void DCR_test_Dialog::AckCmd_DCRTest_slot(QString returnCmdStr,QString cmdInfo)
             for(int j=0; j<9;j++)
             {
                 tmpStr = cmdInfo.mid(index*4,4);
-                int DCR_tmp_int = tmpStr.toInt(NULL,16);
-                DCR_Item[i][j].setText(QString::number(DCR_tmp_int));
+                float DCR_tmp_int = tmpStr.toInt(NULL,16);
+                float DCR_tmp_float = DCR_tmp_int/devTime+0.5;
+                int resInt = DCR_tmp_float;
+                DCR_Item[i][j].setText(QString::number(resInt));
 
                 index++;
             }

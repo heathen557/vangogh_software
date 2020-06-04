@@ -20,6 +20,8 @@ public:
 
     QTableWidgetItem  DCR_Item[17][9];
 
+    float devTime;
+
 
 signals:
     void sendSerialSignal(QString );             //串口发送信号

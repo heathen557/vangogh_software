@@ -101,7 +101,7 @@ void distanceTest_Dialog::showTimer_slot()
     if(len<1)
         return;
     //计算LSB的均值和方差
-    LSB_mean = std::accumulate(std::begin(StatisticLSB_vector),std::end(StatisticLSB_vector),0.0);
+    LSB_mean = std::accumulate(std::begin(StatisticLSB_vector),std::end(StatisticLSB_vector),0.0)/len;
 
     float LSB_Accum = 0.0;
     std::for_each(std::begin(StatisticLSB_vector),std::end(StatisticLSB_vector),[&](const double d){
@@ -117,7 +117,7 @@ void distanceTest_Dialog::showTimer_slot()
     len = StatisticMM_vector.size();
     if(len<1)
         return;
-    MM_mean = std::accumulate(std::begin(StatisticMM_vector),std::end(StatisticMM_vector),0.0);
+    MM_mean = std::accumulate(std::begin(StatisticMM_vector),std::end(StatisticMM_vector),0.0)/len;
 
     float MM_Accum = 0.0;
     std::for_each(std::begin(StatisticMM_vector),std::end(StatisticMM_vector),[&](const double d){
