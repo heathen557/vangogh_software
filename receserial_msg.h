@@ -42,6 +42,7 @@ public:
     float C3;
     float R0;
     float row0;
+    float row;
     float P0;
 
     float IT;

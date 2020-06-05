@@ -23,12 +23,13 @@ receSerial_msg::receSerial_msg(QObject *parent) : QObject(parent)
     C3 = paraSetting.value("confidence_para/C3").toString().toFloat();
     R0 = paraSetting.value("confidence_para/R0").toString().toFloat();
     row0 = paraSetting.value("confidence_para/row0").toString().toFloat();
+    row = paraSetting.value("confidence_para/row").toString().toFloat();
     P0 = paraSetting.value("confidence_para/P0").toString().toFloat();
 
     IT = paraSetting.value("confidence_para/IT").toString().toFloat();
     IT0 = paraSetting.value("confidence_para/IT0").toString().toFloat();
 
-    qDebug()<<"C1 = "<<C1<<"  C2="<<C2<<" C3="<<C3<<"  R0="<<R0<<"  row0="<<IT<<"  row0="<<row0<<"  p0="<<P0;
+    qDebug()<<"C1 = "<<C1<<"  C2="<<C2<<" C3="<<C3<<"  R0="<<R0<<"  row0="<<row0<<"  row="<<row<<"  p0="<<P0;
 
 
 }
@@ -369,9 +370,11 @@ void receSerial_msg::readDataSlot()
 //                            float tmpFloat_1 = sqrt(C3 * noise_mean);
 //                            float tmpFloat_2 = (P0 * P * IT)/(6 * P0 * tmpFloat_1 * IT0 );
 //                            Dmax = R0 * sqrt(tmpFloat_2);
-                            float tmpFloat_1 = (0.5 * P0)/(6 * row0 * sigma);
-                            Dmax = R0 * sqrt(tmpFloat_1);
-
+                            float tmpFloat_up = R0 * sqrt((row * P0)/(row0));
+                            float tmpFloat_1 = 3 + sqrt(9+4*(N2+3*sigma));
+                            float tmpFloat_2 = pow(tmpFloat_1/2.0,2) - N2;
+                            float tmpFloat_down = sqrt(tmpFloat_2);
+                            Dmax = tmpFloat_up/tmpFloat_down;
 
 
 
@@ -455,11 +458,11 @@ void receSerial_msg::readDataSlot()
                            }
 
                            // 4 计算DMAX
-//                           float tmpFloat_1 = sqrt(C3 * noise_mean);
-//                           float tmpFloat_2 = (P0 * P * IT)/(6 * P0 * tmpFloat_1 * IT0 );
-//                           Dmax = R0 * sqrt(tmpFloat_2);
-                           float tmpFloat_1 = (0.5 * P0)/(6 * row0 * sigma);
-                           Dmax = R0 * sqrt(tmpFloat_1);
+                           float tmpFloat_up = R0 * sqrt((row * P0)/(row0));
+                           float tmpFloat_1 = 3 + sqrt(9+4*(N2+3*sigma));
+                           float tmpFloat_2 = pow(tmpFloat_1/2.0,2) - N2;
+                           float tmpFloat_down = sqrt(tmpFloat_2);
+                           Dmax = tmpFloat_up/tmpFloat_down;
 
 
                            currentSingleData = QString::number(tmp_LSB);
