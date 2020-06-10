@@ -42,6 +42,8 @@ signals:
     void sendSerialSignal(QString);             //串口发送信号
     void Display_log_signal(QString);
 
+    void alterStatisNum_confidenceOffset_signal(int ,int );
+
 private slots:
     void on_save_pushButton_clicked();
 
@@ -60,6 +62,13 @@ private slots:
     void on_stop_pushButton_2_clicked();
 
     void on_clear_pushButton_clicked();
+
+    void on_comboBox_currentIndexChanged(const QString &arg1);
+
+
+    void on_confidenceOffset_lineEdit_returnPressed();
+
+    void on_ok_pushButton_clicked();
 
 private:
     Ui::distanceTest_Dialog *ui;

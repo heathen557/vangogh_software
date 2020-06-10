@@ -305,3 +305,26 @@ void distanceTest_Dialog::on_clear_pushButton_clicked()
 {
    ui->plainTextEdit->clear();
 }
+
+void distanceTest_Dialog::on_comboBox_currentIndexChanged(const QString &arg1)
+{
+    int statisNum = arg1.toInt();
+    int confidenceOffset = ui->confidenceOffset_lineEdit->text().toInt();
+    emit alterStatisNum_confidenceOffset_signal(statisNum,confidenceOffset);
+}
+
+
+
+void distanceTest_Dialog::on_confidenceOffset_lineEdit_returnPressed()
+{
+    int statisNum = ui->comboBox->currentText().toInt();
+    int confidenceOffset = ui->confidenceOffset_lineEdit->text().toInt();
+    emit alterStatisNum_confidenceOffset_signal(statisNum,confidenceOffset);
+}
+
+void distanceTest_Dialog::on_ok_pushButton_clicked()
+{
+    int statisNum = ui->comboBox->currentText().toInt();
+    int confidenceOffset = ui->confidenceOffset_lineEdit->text().toInt();
+    emit alterStatisNum_confidenceOffset_signal(statisNum,confidenceOffset);
+}

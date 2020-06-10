@@ -10,6 +10,9 @@ receSerial_msg::receSerial_msg(QObject *parent) : QObject(parent)
     serial = NULL;
     clearFlag = false;
 
+    statisticPoint_number = 500;    //统计点的个数
+    confidence_offset = 40;        //置信度阈值
+
     vangoghHistogram_512.resize(512);
 
 
@@ -480,15 +483,15 @@ void receSerial_msg::readDataSlot()
 
 
                            //统计信息相关的变量存储
-                           int StatisticLSB_offset = StatisticLSB_vector.size() -1000;
-                           if(StatisticLSB_offset >= 0)
+                           int StatisticLSB_offset = StatisticLSB_vector.size() -statisticPoint_number;
+                           if(StatisticLSB_offset >= 0 &&  confidence>confidence_offset)
                            {
                                StatisticLSB_vector.erase(StatisticLSB_vector.begin(),StatisticLSB_vector.begin()+StatisticLSB_offset+1);
                            }
                            StatisticLSB_vector.push_back(tmp_LSB);
 
-                           int StatisticMM_offset = StatisticMM_vector.size() - 1000;
-                           if(StatisticMM_offset>=0)
+                           int StatisticMM_offset = StatisticMM_vector.size() - statisticPoint_number;
+                           if(StatisticMM_offset >= 0 &&  confidence>confidence_offset)
                            {
                                StatisticMM_vector.erase(StatisticMM_vector.begin(),StatisticMM_vector.begin()+StatisticMM_offset + 1);
                            }
@@ -606,6 +609,14 @@ void receSerial_msg::readDataSlot()
         }
 
     }
+}
+
+//修改统计点数、阈值的槽函数
+void receSerial_msg::alterStatisNum_confidenceOffset_slot(int statisNum ,int offset)
+{
+    qDebug()<<"statisticNum = "<<statisNum<<"  offset="<<offset;
+    statisticPoint_number = statisNum;    //统计点的个数
+    confidence_offset = offset;        //置信度阈值
 }
 
 

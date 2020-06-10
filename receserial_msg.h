@@ -49,6 +49,11 @@ public:
     float IT0;
 
 
+    /******统计信息相关****************/
+    int statisticPoint_number;    //统计点的个数
+    int confidence_offset;        //置信度阈值
+
+
 
 signals:
     void dealedData_signal(QString,vector<double>,vector<double>);     //当前的tof值 ; plotData ; statisticData
@@ -106,6 +111,8 @@ public slots:
     QString addCheck(QString);
 
     QByteArray StringToByte(QString str);      //将QString 转换为 Byte的槽函数
+
+    void alterStatisNum_confidenceOffset_slot(int ,int );
 
 
 
