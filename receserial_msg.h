@@ -22,8 +22,13 @@ public:
     bool isTranslateFlag;     //解析数据 还是直接显示16进制的 切换标识 true：则对数据进行解析
 
     //统计相关
-    vector<double> StatisticLSB_vector;     //统计相关  均值方差
-    vector<double> StatisticMM_vector;
+    vector<double> StatisticLSB_vector;     //统计相关  LSB均值方差
+    vector<double> StatisticMM_vector;      //          MM均值方差
+    vector<double> Statistic_decetionRate_vector;
+    //检出率相关
+    float detection_minOffset;
+    float detection_maxOffset;
+
 
 
 
@@ -94,7 +99,7 @@ signals:
     void toShow4300_histogramSignal(QVector<double>,int);
 
     void toShow_vangogh_ResultMsg_signal(QStringList,int);
-    void toSendStatistic_signal(vector<double>,vector<double>);     //tof ,MM的容器
+    void toSendStatistic_signal(vector<double>,vector<double>,vector<double>);     //tof ,MM的容器,检出率的容器
 
 
 
@@ -113,6 +118,8 @@ public slots:
     QByteArray StringToByte(QString str);      //将QString 转换为 Byte的槽函数
 
     void alterStatisNum_confidenceOffset_slot(int ,int );
+
+    void sendDetectionOffset_slot(float,float);
 
 
 

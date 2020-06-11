@@ -100,7 +100,7 @@ void distanceTest_Dialog::showTimer_slot()
     len = StatisticLSB_vector.size();
     if(len<1)
         return;
-    //计算LSB的均值和方差
+    // 1 计算LSB的均值和方差
     LSB_mean = std::accumulate(std::begin(StatisticLSB_vector),std::end(StatisticLSB_vector),0.0)/len;
 
     float LSB_Accum = 0.0;
@@ -113,7 +113,7 @@ void distanceTest_Dialog::showTimer_slot()
     ui->LSB_std_label->setText(QString::number(LSB_std));
 
 
-    //
+    // 2 计算MM的均值和方差
     len = StatisticMM_vector.size();
     if(len<1)
         return;
@@ -128,6 +128,27 @@ void distanceTest_Dialog::showTimer_slot()
     ui->MM_std_label->setText(QString::number(MM_std));
 
 
+    // 3 计算MM检出率
+    sort(detectionRate_vector.begin(),detectionRate_vector.end());
+    len = detectionRate_vector.size();
+    float midValue = detectionRate_vector[len/2];
+    float count = 0;
+    for(int i=0; i<len;i++)
+    {
+        if(detectionRate_vector[i]>(midValue-detection_rate_offset) && detectionRate_vector[i]<(midValue+detection_rate_offset) )
+        {
+            count++;
+        }
+    }
+    float len_float = len;
+    float detectionRate = count/len_float;
+    ui->detection_rate_label->setText(QString::number(detectionRate));
+
+
+    // 4 计算完检出率之后，发送给数据接收线程，数据接收线程 根据检出率的阈值 决定是否将接收到的值纳入到 统计均值和方差的
+    float minOffset = midValue-detection_rate_offset;
+    float maxOffset = midValue+detection_rate_offset;
+    emit sendDetectionOffset_signal(minOffset,maxOffset);
 
 
 }
@@ -243,10 +264,11 @@ void  distanceTest_Dialog::saveData_Timer_slot()
 //!
 //! \brief distanceTest_Dialog::toSendStatistic_slot
 //! 接收统计信息的槽函数，存储相关的变量
-void distanceTest_Dialog::toSendStatistic_slot(vector<double> LSB_vector,vector<double> MM_vector)
+void distanceTest_Dialog::toSendStatistic_slot(vector<double> LSB_vector,vector<double> MM_vector,vector<double> detect_vector)
 {
     StatisticLSB_vector = LSB_vector;
     StatisticMM_vector = MM_vector;
+    detectionRate_vector = detect_vector;
 }
 
 
@@ -324,7 +346,8 @@ void distanceTest_Dialog::on_confidenceOffset_lineEdit_returnPressed()
 
 void distanceTest_Dialog::on_ok_pushButton_clicked()
 {
-    int statisNum = ui->comboBox->currentText().toInt();
+    statisNum = ui->comboBox->currentText().toInt();
     int confidenceOffset = ui->confidenceOffset_lineEdit->text().toInt();
+    detection_rate_offset = ui->detection_rate_lineEdit->text().toInt();
     emit alterStatisNum_confidenceOffset_signal(statisNum,confidenceOffset);
 }

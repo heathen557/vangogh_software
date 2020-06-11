@@ -482,26 +482,44 @@ void receSerial_msg::readDataSlot()
                            currentSingleData.append("mm   ");
 
 
-                           //统计信息相关的变量存储
+                           //1 统计信息相关的变量存储   LSB 的存储
                            int StatisticLSB_offset = StatisticLSB_vector.size() -statisticPoint_number;
-                           if(StatisticLSB_offset >= 0 &&  confidence>confidence_offset)
+                           if(StatisticLSB_offset >= 0 )
                            {
                                StatisticLSB_vector.erase(StatisticLSB_vector.begin(),StatisticLSB_vector.begin()+StatisticLSB_offset+1);
                            }
-                           StatisticLSB_vector.push_back(tmp_LSB);
+                           if(confidence>confidence_offset && tmp_MM>detection_minOffset && tmp_MM<detection_maxOffset)    //根据置信度来决定是否添加到 容器当中
+                           {
+                               StatisticLSB_vector.push_back(tmp_LSB);
+                           }
 
+
+                           //2 MM 单位的存储
                            int StatisticMM_offset = StatisticMM_vector.size() - statisticPoint_number;
-                           if(StatisticMM_offset >= 0 &&  confidence>confidence_offset)
+                           if(StatisticMM_offset >= 0 )
                            {
                                StatisticMM_vector.erase(StatisticMM_vector.begin(),StatisticMM_vector.begin()+StatisticMM_offset + 1);
                            }
-                           StatisticMM_vector.push_back(tmp_MM);
+                           if(confidence>confidence_offset && tmp_MM>detection_minOffset && tmp_MM<detection_maxOffset)
+                           {
+                               StatisticMM_vector.push_back(tmp_MM);
+                           }
 
+
+
+
+                           //3 检出率相关的存储
+                           int StatisticDecetion_offset = Statistic_decetionRate_vector.size() - statisticPoint_number;
+                           if(StatisticDecetion_offset >= 0)
+                           {
+                               Statistic_decetionRate_vector.erase(Statistic_decetionRate_vector.begin(),Statistic_decetionRate_vector.begin()+StatisticDecetion_offset+1);
+                           }
+                           Statistic_decetionRate_vector.push_back(tmp_MM);
 
 
                            vangogh_DistanceStr.append(currentSingleData);
                        }
-                       emit toSendStatistic_signal(StatisticLSB_vector,StatisticMM_vector);
+                       emit toSendStatistic_signal(StatisticLSB_vector,StatisticMM_vector,Statistic_decetionRate_vector);
                        emit toShow_vangogh_ResultMsg_signal(vangogh_DistanceStr,pointNum);
                        vangogh_DistanceStr.clear();
 
@@ -617,6 +635,13 @@ void receSerial_msg::alterStatisNum_confidenceOffset_slot(int statisNum ,int off
     qDebug()<<"statisticNum = "<<statisNum<<"  offset="<<offset;
     statisticPoint_number = statisNum;    //统计点的个数
     confidence_offset = offset;        //置信度阈值
+}
+
+//接收检出率阈值的槽函数阈值
+void receSerial_msg::sendDetectionOffset_slot(float minOffset,float maxOffset)
+{
+    detection_minOffset = minOffset;
+    detection_maxOffset = maxOffset;
 }
 
 

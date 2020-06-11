@@ -34,7 +34,7 @@ public slots:
 
 
     void toShow_vangogh_ResultMsg_slot(QStringList,int);
-    void toSendStatistic_slot(vector<double>,vector<double>);
+    void toSendStatistic_slot(vector<double>,vector<double>,vector<double>);
 
 
 
@@ -43,6 +43,8 @@ signals:
     void Display_log_signal(QString);
 
     void alterStatisNum_confidenceOffset_signal(int ,int );
+
+    void sendDetectionOffset_signal(float,float);
 
 private slots:
     void on_save_pushButton_clicked();
@@ -86,8 +88,13 @@ private:
     //统计信息相关
     vector<double> StatisticLSB_vector;     //统计相关  均值方差
     vector<double> StatisticMM_vector;
+    vector<double> detectionRate_vector;   //
+
+
     float LSB_mean,LSB_std;
     float MM_mean,MM_std;
+    int detection_rate_offset;  //检出率的阈值
+    int statisNum;      //统计的帧数
 
     //1s的定时器
     QTimer oneSec_Timer;

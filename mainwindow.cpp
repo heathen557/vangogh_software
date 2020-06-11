@@ -54,6 +54,7 @@ void MainWindow::initConnect()
     connect(&distanceTest_dia,&distanceTest_Dialog::Display_log_signal,this,&MainWindow::Display_log_slot);
     connect(receSerial_Obj,&receSerial_msg::toSendStatistic_signal,&distanceTest_dia,&distanceTest_Dialog::toSendStatistic_slot);
     connect(&distanceTest_dia,&distanceTest_Dialog::alterStatisNum_confidenceOffset_signal,receSerial_Obj,&receSerial_msg::alterStatisNum_confidenceOffset_slot);
+    connect(&distanceTest_dia,&distanceTest_Dialog::sendDetectionOffset_signal,receSerial_Obj,&receSerial_msg::sendDetectionOffset_slot);
 
     //RowData相关
     connect(&RawData_dia,&RowData_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
