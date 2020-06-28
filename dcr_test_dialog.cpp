@@ -10,6 +10,8 @@ DCR_test_Dialog::DCR_test_Dialog(QWidget *parent) :
 
     devTime = 1.0;
 
+
+
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);

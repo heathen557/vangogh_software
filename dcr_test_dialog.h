@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include<qdebug.h>
+#include<QTableWidget>
 #include<QTableWidgetItem>
 
 namespace Ui {
@@ -21,6 +22,7 @@ public:
     QTableWidgetItem  DCR_Item[17][9];
 
     float devTime;
+
 
 
 signals:

@@ -46,6 +46,8 @@ signals:
 
     void sendDetectionOffset_signal(float,float);
 
+    void alter_KB_para_signal(float,float);
+
 private slots:
     void on_save_pushButton_clicked();
 
@@ -71,6 +73,8 @@ private slots:
     void on_confidenceOffset_lineEdit_returnPressed();
 
     void on_ok_pushButton_clicked();
+
+    void on_linear_pushButton_clicked();
 
 private:
     Ui::distanceTest_Dialog *ui;

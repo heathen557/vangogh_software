@@ -18,6 +18,16 @@ distanceTest_Dialog::distanceTest_Dialog(QWidget *parent) :
 
 
     saveIndex = 1;
+
+
+
+    QSettings paraSetting("parameters.ini", QSettings::IniFormat);
+
+
+    QString k_str = paraSetting.value("linear/k_parameter").toString();
+    QString b_str = paraSetting.value("linear/b_parameter").toString();
+    ui->K_parameter_lineEdit->setText(k_str);
+    ui->B_parameter_lineEdit->setText(b_str);
 }
 
 distanceTest_Dialog::~distanceTest_Dialog()
@@ -66,6 +76,7 @@ void distanceTest_Dialog::on_stop_pushButton_clicked()
 {
     qDebug()<<"distanceTest_Dialog::on_stop_pushButton_clicked()";
 
+    DistanceStr.clear();
     showTimer.stop();
     oneSec_Timer.stop();
 }
@@ -94,6 +105,34 @@ void distanceTest_Dialog::showTimer_slot()
         ui->plainTextEdit->appendPlainText(DistanceStr[i]);
     }
     DistanceStr.clear();
+
+
+
+    // 3 计算MM检出率
+    sort(detectionRate_vector.begin(),detectionRate_vector.end());
+    len = detectionRate_vector.size();
+//    qDebug()<<"len = "<<len;
+    float midValue = detectionRate_vector[len/2];
+//   qDebug()<<"midValue = "<<midValue;
+    float count = 0;
+    for(int i=0; i<len;i++)
+    {
+        if(detectionRate_vector[i]>(midValue-detection_rate_offset) && detectionRate_vector[i]<(midValue+detection_rate_offset) )
+        {
+            count++;
+        }
+    }
+    float len_float = len;
+    float detectionRate = count/len_float;
+    ui->detection_rate_label->setText(QString::number(detectionRate));   //检出率的计算公式
+
+
+    // 4 计算完检出率之后，发送给数据接收线程，数据接收线程 根据检出率的阈值 决定是否将接收到的值纳入到 统计均值和方差的
+    float minOffset = midValue-detection_rate_offset;
+    float maxOffset = midValue+detection_rate_offset;
+    emit sendDetectionOffset_signal(minOffset,maxOffset);
+
+
 
 
     //计算LSB的均值和方差
@@ -127,28 +166,6 @@ void distanceTest_Dialog::showTimer_slot()
     ui->MM_mean_label->setText(QString::number(MM_mean));
     ui->MM_std_label->setText(QString::number(MM_std));
 
-
-    // 3 计算MM检出率
-    sort(detectionRate_vector.begin(),detectionRate_vector.end());
-    len = detectionRate_vector.size();
-    float midValue = detectionRate_vector[len/2];
-    float count = 0;
-    for(int i=0; i<len;i++)
-    {
-        if(detectionRate_vector[i]>(midValue-detection_rate_offset) && detectionRate_vector[i]<(midValue+detection_rate_offset) )
-        {
-            count++;
-        }
-    }
-    float len_float = len;
-    float detectionRate = count/len_float;
-    ui->detection_rate_label->setText(QString::number(detectionRate));
-
-
-    // 4 计算完检出率之后，发送给数据接收线程，数据接收线程 根据检出率的阈值 决定是否将接收到的值纳入到 统计均值和方差的
-    float minOffset = midValue-detection_rate_offset;
-    float maxOffset = midValue+detection_rate_offset;
-    emit sendDetectionOffset_signal(minOffset,maxOffset);
 
 
 }
@@ -269,6 +286,7 @@ void distanceTest_Dialog::toSendStatistic_slot(vector<double> LSB_vector,vector<
     StatisticLSB_vector = LSB_vector;
     StatisticMM_vector = MM_vector;
     detectionRate_vector = detect_vector;
+
 }
 
 
@@ -303,6 +321,9 @@ void distanceTest_Dialog::on_single_distanceTest_pushButton_2_clicked()
 //!连续测量的槽函数
 void distanceTest_Dialog::on_ContinuityTest_pushButton_2_clicked()
 {
+
+    DistanceStr.clear();
+    ui->plainTextEdit->clear();
     QString cmdStr ="5A 00 02 00 59 01";
     emit sendSerialSignal(cmdStr);
 
@@ -318,6 +339,8 @@ void distanceTest_Dialog::on_stop_pushButton_2_clicked()
     QString cmdStr = "5A 00 02 00 59 00";
     emit sendSerialSignal(cmdStr);
 
+
+    DistanceStr.clear();
     showTimer.stop();
     oneSec_Timer.stop();
 
@@ -336,7 +359,6 @@ void distanceTest_Dialog::on_comboBox_currentIndexChanged(const QString &arg1)
 }
 
 
-
 void distanceTest_Dialog::on_confidenceOffset_lineEdit_returnPressed()
 {
     int statisNum = ui->comboBox->currentText().toInt();
@@ -344,10 +366,26 @@ void distanceTest_Dialog::on_confidenceOffset_lineEdit_returnPressed()
     emit alterStatisNum_confidenceOffset_signal(statisNum,confidenceOffset);
 }
 
+
 void distanceTest_Dialog::on_ok_pushButton_clicked()
 {
     statisNum = ui->comboBox->currentText().toInt();
     int confidenceOffset = ui->confidenceOffset_lineEdit->text().toInt();
     detection_rate_offset = ui->detection_rate_lineEdit->text().toInt();
     emit alterStatisNum_confidenceOffset_signal(statisNum,confidenceOffset);
+}
+
+
+void distanceTest_Dialog::on_linear_pushButton_clicked()
+{
+    float k = ui->K_parameter_lineEdit->text().toFloat();
+    float b = ui->B_parameter_lineEdit->text().toFloat();
+    emit alter_KB_para_signal(k,b);
+    qDebug()<<"k="<<k<<"   b="<<b;
+
+
+    QSettings paraSetting("parameters.ini", QSettings::IniFormat);
+
+    paraSetting.setValue("linear/k_parameter",QString::number(k));
+    paraSetting.setValue("linear/b_parameter",QString::number(b));
 }

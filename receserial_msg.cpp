@@ -13,6 +13,10 @@ receSerial_msg::receSerial_msg(QObject *parent) : QObject(parent)
     statisticPoint_number = 500;    //统计点的个数
     confidence_offset = 40;        //置信度阈值
 
+    detection_minOffset = 0;   //检出率的阈值 应该大于的最小值；
+    detection_maxOffset = 0;   //检出率的阈值， 应该小于的最大值；
+
+
     vangoghHistogram_512.resize(512);
 
 
@@ -32,7 +36,16 @@ receSerial_msg::receSerial_msg(QObject *parent) : QObject(parent)
     IT = paraSetting.value("confidence_para/IT").toString().toFloat();
     IT0 = paraSetting.value("confidence_para/IT0").toString().toFloat();
 
-    qDebug()<<"C1 = "<<C1<<"  C2="<<C2<<" C3="<<C3<<"  R0="<<R0<<"  row0="<<row0<<"  row="<<row<<"  p0="<<P0;
+    k_parameter = paraSetting.value("linear/k_parameter").toString().toFloat();
+    b_parameter= paraSetting.value("linear/b_parameter").toString().toFloat();
+
+    if(0 ==k_parameter && 0==b_parameter)
+    {
+        k_parameter = 1;
+        b_parameter = 0;
+    }
+
+    qDebug()<<"C1 = "<<C1<<"  C2="<<C2<<" C3="<<C3<<"  R0="<<R0<<"  row0="<<row0<<"  row="<<row<<"  p0="<<P0<<" k_parameter="<<k_parameter<<" b_parameter="<<b_parameter;
 
 
 }
@@ -108,6 +121,7 @@ void receSerial_msg::readDataSlot()
 
         m_buffer.append(strHex);
         totallen = m_buffer.size();
+
 
         if(isTranslateFlag)    //转换成十进制的tof和peak进行显示解析
         {
@@ -332,12 +346,14 @@ void receSerial_msg::readDataSlot()
                         float confidence = 0 ;
                         float Dmax = 0;
 
+                        float reference_LSB = 0;
+                        float reference_MM = 0;
 
 
                         int pointNum = 0;    //该包数据点的个数
 
                          //16进制数据转化为10进制 然后再转化成字符串
-                        for(int i=0; i<dataLen; i+=20)
+                        for(int i=0; i<dataLen; i+=28)
                         {
                             pointNum++;
                             // 1  16进制数据转化为10进制 然后再转化成字符串
@@ -350,6 +366,10 @@ void receSerial_msg::readDataSlot()
                             strTmp = dataStr.mid(18,2) + dataStr.mid(16,2);
 //                            qDebug()<<"strTmp = "<<strTmp;
                             noise_mean = strTmp.toInt(NULL,16); // 4
+                            strTmp = dataStr.mid(22,2) + dataStr.mid(20,2);
+                            reference_LSB = strTmp.toInt(NULL,16);  //5
+                            strTmp = dataStr.mid(26,2) + dataStr.mid(24,2);
+                            reference_MM = strTmp.toInt(NULL,16);   //6
 
                             //2 显示
                             N1 = noise_mean * C1;
@@ -393,6 +413,10 @@ void receSerial_msg::readDataSlot()
                             currentSingleData.append("/64   ");
                             currentSingleData.append(QString::number(Dmax,'f',3));
                             currentSingleData.append("mm   ");
+                            currentSingleData.append(QString::number(reference_LSB));
+                            currentSingleData.append("   ");
+                            currentSingleData.append(QString::number(reference_MM));
+                            currentSingleData.append("   ");
 
                             vangogh_DistanceStr.append(currentSingleData);
                         }
@@ -412,6 +436,7 @@ void receSerial_msg::readDataSlot()
                     {
                         QString dataStr = single_Data.mid(10,dataLen);
                         QString currentSingleData;
+                        currentSingleData.clear();
                         float tmp_LSB = 0;
                         float tmp_MM = 0;
                         int pointNum = 0;
@@ -422,10 +447,12 @@ void receSerial_msg::readDataSlot()
                         float confidence = 0 ;
                         float Dmax = 0;
 
-                        //16进制数据转化为10进制 然后再转化成字符串
-                       for(int i=0; i<dataLen; i+=20)
-                       {
+                        float reference_LSB = 0;
+                        float reference_MM = 0;
 
+                        //16进制数据转化为10进制 然后再转化成字符串   2Byte-LSB  2BYte-mm 4byte-peak  2byte-noiseLevel 2byte-refernceLSB 2byte-referenceMM
+                       for(int i=0; i<dataLen; i+=28)
+                       {
 
                            pointNum++;
                            //16进制数据转化为10进制 然后再转化成字符串
@@ -434,11 +461,21 @@ void receSerial_msg::readDataSlot()
                            tmp_LSB = strTmp.toInt(NULL,16);   //1
                            strTmp = dataStr.mid(i+6,2) + dataStr.mid(i+4,2);
                            tmp_MM = strTmp.toInt(NULL,16);    //2
+                           tmp_MM = k_parameter * tmp_MM +b_parameter;
+
                            strTmp = dataStr.mid(14,2) + dataStr.mid(12,2) + dataStr.mid(10,2) + dataStr.mid(8,2);
                            tmp_peak = strTmp.toInt(NULL,16);  //3
                            strTmp = dataStr.mid(18,2) + dataStr.mid(16,2);
-
                            noise_mean = strTmp.toInt(NULL,16); // 4
+                           strTmp = dataStr.mid(22,2) + dataStr.mid(20,2);
+                           reference_LSB = strTmp.toInt(NULL,16);  //5
+                           strTmp = dataStr.mid(26,2) + dataStr.mid(24,2);
+                           reference_MM = strTmp.toInt(NULL,16);   //6
+
+
+
+
+
 
 
                            //2 显示
@@ -480,6 +517,10 @@ void receSerial_msg::readDataSlot()
                            currentSingleData.append("/64   ");
                            currentSingleData.append(QString::number(Dmax,'f',3));
                            currentSingleData.append("mm   ");
+                           currentSingleData.append(QString::number(reference_LSB));
+                           currentSingleData.append("   ");
+                           currentSingleData.append(QString::number(reference_MM));
+                           currentSingleData.append("   ");
 
 
                            //1 统计信息相关的变量存储   LSB 的存储
@@ -488,7 +529,7 @@ void receSerial_msg::readDataSlot()
                            {
                                StatisticLSB_vector.erase(StatisticLSB_vector.begin(),StatisticLSB_vector.begin()+StatisticLSB_offset+1);
                            }
-                           if(confidence>confidence_offset && tmp_MM>detection_minOffset && tmp_MM<detection_maxOffset)    //根据置信度来决定是否添加到 容器当中
+                           if(confidence>confidence_offset /*&& tmp_MM>detection_minOffset && tmp_MM<detection_maxOffset*/)    //根据置信度来决定是否添加到 容器当中
                            {
                                StatisticLSB_vector.push_back(tmp_LSB);
                            }
@@ -500,7 +541,7 @@ void receSerial_msg::readDataSlot()
                            {
                                StatisticMM_vector.erase(StatisticMM_vector.begin(),StatisticMM_vector.begin()+StatisticMM_offset + 1);
                            }
-                           if(confidence>confidence_offset && tmp_MM>detection_minOffset && tmp_MM<detection_maxOffset)
+                           if(confidence>confidence_offset /*&& tmp_MM>detection_minOffset && tmp_MM<detection_maxOffset*/)
                            {
                                StatisticMM_vector.push_back(tmp_MM);
                            }
@@ -518,7 +559,10 @@ void receSerial_msg::readDataSlot()
 
 
                            vangogh_DistanceStr.append(currentSingleData);
+//                           qDebug()<<"currentSingleData = "<<currentSingleData;
                        }
+
+
                        emit toSendStatistic_signal(StatisticLSB_vector,StatisticMM_vector,Statistic_decetionRate_vector);
                        emit toShow_vangogh_ResultMsg_signal(vangogh_DistanceStr,pointNum);
                        vangogh_DistanceStr.clear();
@@ -590,6 +634,30 @@ void receSerial_msg::readDataSlot()
 
                     }
 
+                }
+
+                //17 、时钟校准的返回指令
+                if("80" == returnCmdStr)
+                {
+                    QString secCmd = single_Data.mid(8,2);
+                    if("60" == secCmd)
+                    {
+                        QString returnAck = "8060";
+                        QString AckInfo = single_Data.mid(10,dataLen);
+                        emit AckCmd_MainWindow_signal(returnAck,AckInfo);
+                    }
+                }
+
+                //18、 VSPAD校准的返回指令
+                if("80" == returnCmdStr)
+                {
+                    QString secCmd = single_Data.mid(8,2);
+                    if("61" == secCmd)
+                    {
+                        QString returnAck = "8061";
+                        QString AckInfo = single_Data.mid(10,dataLen);
+                        emit AckCmd_MainWindow_signal(returnAck,AckInfo);
+                    }
                 }
 
 
@@ -677,6 +745,10 @@ bool receSerial_msg::msgCheck(QString msg)
 //! 4、清空缓存区
 void receSerial_msg::sendSerialSlot(QString sendCmdStr)
 {
+
+    m_buffer.clear();
+    totallen = 0;
+    vangogh_DistanceStr.clear();
     QByteArray sendArray;
     QString wholeStr;
     wholeStr = addCheck(sendCmdStr);     //添加校验
@@ -768,6 +840,14 @@ QByteArray receSerial_msg::StringToByte(QString str)
     return byte_arr;
 }
 
+
+void receSerial_msg::alter_KB_para_slot(float k,float b)
+{
+    k_parameter  = k;
+    b_parameter = b;
+    qDebug()<<"receSerial_msg ,k="<<k_parameter<<"  b="<<b_parameter;
+
+}
 
 
 

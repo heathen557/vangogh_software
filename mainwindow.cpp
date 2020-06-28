@@ -55,6 +55,7 @@ void MainWindow::initConnect()
     connect(receSerial_Obj,&receSerial_msg::toSendStatistic_signal,&distanceTest_dia,&distanceTest_Dialog::toSendStatistic_slot);
     connect(&distanceTest_dia,&distanceTest_Dialog::alterStatisNum_confidenceOffset_signal,receSerial_Obj,&receSerial_msg::alterStatisNum_confidenceOffset_slot);
     connect(&distanceTest_dia,&distanceTest_Dialog::sendDetectionOffset_signal,receSerial_Obj,&receSerial_msg::sendDetectionOffset_slot);
+    connect(&distanceTest_dia,&distanceTest_Dialog::alter_KB_para_signal,receSerial_Obj,&receSerial_msg::alter_KB_para_slot);
 
     //RowData相关
     connect(&RawData_dia,&RowData_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
@@ -89,6 +90,9 @@ void MainWindow::initConnect()
     connect(receSerial_Obj,&receSerial_msg::AckCmd_windowSetting_signal,&windowSetting_dia,&windowSetting_Dialog::AckCmd_windowSetting_slot);
 
 
+    //pixel使能设置界面
+    connect(&pixelSetting_dia,&pixelSetting_Dialog::sendSerialSignal,receSerial_Obj,&receSerial_msg::sendSerialSlot);
+    connect(receSerial_Obj,&receSerial_msg::AckCmd_PixelSetting_signal,&pixelSetting_dia,&pixelSetting_Dialog::AckCmd_PixelSetting_slot);
 
 
 }
@@ -383,17 +387,19 @@ void MainWindow::on_electricityTest_pushButton_clicked()
 
 //!
 //! \brief MainWindow::on_vango_timeCheck_pushButton_clicked
-//!
+//!  时钟校准
 void MainWindow::on_vango_timeCheck_pushButton_clicked()
 {
-
+    QString cmdStr = "5A 00 01 00 60";
+    emit sendSerialSignal(cmdStr);
 }
 //!
 //! \brief MainWindow::on_vango_vspadCheck_pushButton_clicked
-//!
+//!VSpad校准
 void MainWindow::on_vango_vspadCheck_pushButton_clicked()
 {
-
+    QString cmdStr = "5A 00 01 00 61";
+    emit sendSerialSignal(cmdStr);
 }
 //!
 //! \brief MainWindow::on_vango_MCU_test_pushButton_clicked
@@ -1002,6 +1008,37 @@ void MainWindow::AckCmd_MainWindow_slot(QString returnCmd,QString AckInfo)
             }
         }
 
+    }else if("8060" == returnCmd)   //1字节成功/失败  1字节的 校准结果
+    {
+        int flag = AckInfo.mid(0,2).toInt(NULL,16);
+        QString resIntStr = AckInfo.mid(2,2);
+        if(0 == flag)
+        {
+            QString strMsg = QStringLiteral("时钟校准成功，校准结果：")+ resIntStr;
+            Display_log_slot(strMsg);
+            QMessageBox::information(NULL,QStringLiteral("提示"),strMsg);
+        }else
+        {
+            QString strMsg = QStringLiteral("时钟校准失败！");
+            Display_log_slot(strMsg);
+            QMessageBox::information(NULL,QStringLiteral("提示"),strMsg);
+        }
+
+    }else if("8061" == returnCmd)  //1字节成功/失败  1字节的 校准结果
+    {
+        int flag = AckInfo.mid(0,2).toInt(NULL,16);
+        QString resIntStr = AckInfo.mid(2,2);
+        if(0 == flag)
+        {
+            QString strMsg = QStringLiteral("VSpad校准成功，校准结果：")+ resIntStr;
+            Display_log_slot(strMsg);
+            QMessageBox::information(NULL,QStringLiteral("提示"),strMsg);
+        }else
+        {
+            QString strMsg = QStringLiteral("VSpad校准失败！");
+            Display_log_slot(strMsg);
+            QMessageBox::information(NULL,QStringLiteral("提示"),strMsg);
+        }
     }
 }
 
@@ -1030,4 +1067,10 @@ void MainWindow::on_Vango_Delayline_pushButton_clicked()
 void MainWindow::on_windowSetting_pushButton_clicked()
 {
     windowSetting_dia.show();
+}
+
+//pixel使能设置界面
+void MainWindow::on_Pixel_enable_pushButton_clicked()
+{
+    pixelSetting_dia.show();
 }

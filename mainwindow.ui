@@ -667,19 +667,6 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="3">
-        <spacer name="horizontalSpacer_6">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>160</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="3" column="1">
         <widget class="QPushButton" name="vango_MCU_test_pushButton">
          <property name="text">
@@ -792,6 +779,13 @@
         <widget class="QPushButton" name="windowSetting_pushButton">
          <property name="text">
           <string>窗口设置</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="3">
+        <widget class="QPushButton" name="Pixel_enable_pushButton">
+         <property name="text">
+          <string>Pixel使能</string>
          </property>
         </widget>
        </item>

@@ -58,6 +58,9 @@ public:
     int statisticPoint_number;    //统计点的个数
     int confidence_offset;        //置信度阈值
 
+    float k_parameter;
+    float b_parameter;
+
 
 
 signals:
@@ -93,6 +96,8 @@ signals:
 
     void AckCmd_windowSetting_signal(QString,QString);
 
+    void AckCmd_PixelSetting_signal(QString,QString);
+
 
     void toShowVangogh_histogramSignal(int,QVector<double>,int);   //显示梵高的直方图
     void toShowCassatt_histogramSignal(QVector<double>,int);   //显示卡萨特直方图
@@ -120,6 +125,8 @@ public slots:
     void alterStatisNum_confidenceOffset_slot(int ,int );
 
     void sendDetectionOffset_slot(float,float);
+
+    void alter_KB_para_slot(float,float);
 
 
 

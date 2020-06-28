@@ -13,6 +13,7 @@
 #include"dcr_test_dialog.h"
 #include"delayline_dialog.h"
 #include"windowsetting_dialog.h"
+#include"pixelsetting_dialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -77,7 +78,6 @@ private slots:
 
     void on_Register_action_triggered();
 
-
     void on_RawData_dia_pushButton_clicked();
 
     void on_vango_Histogram_pushButton_clicked();
@@ -89,8 +89,6 @@ private slots:
     void on_ChipShineng_checkBox_clicked();
 
     void on_ChipFuwei_pushButton_clicked();
-
-
 
     void on_zongdianyuan_close_radioButton_clicked();
 
@@ -144,9 +142,10 @@ private slots:
 
     void on_windowSetting_pushButton_clicked();
 
+    void on_Pixel_enable_pushButton_clicked();
+
 signals:
     void openOrCloseSerial_signal(bool);
-
     void sendSerialSignal(QString);             //串口发送信号
 
 private:
@@ -154,23 +153,18 @@ private:
 
     receSerial_msg  *receSerial_Obj;      //串口接收数据线程
     QThread *receSerialThread;
-    bool isLinked;   //是否连接的标识
-
-
+    bool isLinked;                          //是否连接的标识
     RegisiterSetDialog register_dia;            //寄存器的配置的界面
     distanceTest_Dialog distanceTest_dia;       //测距界面
     RowData_Dialog RawData_dia;                 //rowData界面
     cassatHistogram_Dialog cassatHistogram_dia;  //Cassat直方图
     channekParameter_Dialog channelPara_dia;     //通道系数设置界面
-
     QStringList fwBin_stringList;
-
     AutoStepping_Dialog autoStep_dia;
     DCR_test_Dialog DCR_test_dia;
-
     delayLine_Dialog delayLine_dia;
-
     windowSetting_Dialog windowSetting_dia;
+    pixelSetting_Dialog  pixelSetting_dia;
 
 
 
